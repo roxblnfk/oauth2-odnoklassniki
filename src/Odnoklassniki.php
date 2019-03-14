@@ -10,6 +10,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class Odnoklassniki extends AbstractProvider
 {
+    const GET_EMAIL = 'GET_EMAIL';
+
     use BearerAuthorizationTrait;
 
     /**
@@ -39,7 +41,7 @@ class Odnoklassniki extends AbstractProvider
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
         $param = 'application_key='.$this->clientPublic
-            .'&fields=uid,name,first_name,last_name,location,pic_3,gender,locale,photo_id'
+            .'&fields=uid,email,name,first_name,last_name,location,pic_3,gender,locale,photo_id'
             .'&method=users.getCurrentUser';
         $sign = md5(str_replace('&', '', $param).md5($token.$this->clientSecret));
         return 'http://api.odnoklassniki.ru/fb.do?'.$param.'&access_token='.$token.'&sig='.$sign;
@@ -50,7 +52,9 @@ class Odnoklassniki extends AbstractProvider
      */
     protected function getDefaultScopes()
     {
-        return [];
+        return [
+            self::GET_EMAIL
+        ];
     }
 
     /**
